@@ -1,0 +1,20 @@
+# comp 
+*.exe
+*.o
+*.obj
+*.out
+*.dll
+
+# build
+/build
+/bin
+/Debug
+/Release
+
+# IDE
+/.vscode
+*.code-workspace
+
+# system
+.DS_Store
+Thumbs.db
