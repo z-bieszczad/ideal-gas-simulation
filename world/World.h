@@ -5,13 +5,13 @@
 
 class World {
     private:
-        std::vector<Particle> particles;
-        float boxSize;
+        std::vector<Particle> _particles;
+        float _boxSize;
 
-        double totalEnergy;
-        double temperature;
-        double pressure;
-        std::vector<int> velocityHistogram;
+        double _totalEnergy;
+        double _temperature;
+        double _pressure;
+        std::vector<int> _velocityHistogram;
     
     public:
         World();
@@ -19,17 +19,17 @@ class World {
         void initializeRandom(int numParticles, double maxSpeed);
 
         const std::vector<Particle>& getParticles() const {
-            return particles;
+            return _particles;
         }
-        float getBoxSize() const { return boxSize; }
+        float getBoxSize() const { return _boxSize; }
 
         void calculateStatistics();
-        double getTemperature() const { return temperature; }
-        double getPressure() const { return pressure; }
-        double getTotalEnergy() const { return totalEnergy; }
-        const std::vector<int>& getHistogram() const { return velocityHistogram; }
+        double getTemperature() const { return _temperature; }
+        double getPressure() const { return _pressure; }
+        double getTotalEnergy() const { return _totalEnergy; }
+        const std::vector<int>& getHistogram() const { return _velocityHistogram; }
 
 
-        void update();
+        void update(double dt);
 
 };

@@ -3,12 +3,12 @@
 #include <cmath>
 
 
-World::World() : boxSize(10.0f) {
-    velocityHistogram.resize(20, 0);
+World::World() : _boxSize(10.0f) {
+    _velocityHistogram.resize(20, 0);
 }
 
 void World::initializeRandom(int numParticles, double maxSpeed) {
-    particles.clear();
+    _particles.clear();
 
     for (int i = 0; i < numParticles; i++) {
         double x = (rand() % 1000 - 500) / 100.0;
@@ -28,41 +28,45 @@ void World::initializeRandom(int numParticles, double maxSpeed) {
 
         Particle p(position, velocity, 1.0, 0.2);
 
-        particles.push_back(p);
+        _particles.push_back(p);
     }
 
     calculateStatistics();
 
-    std::cout << "World create " << particles.size() << " particles" << std::endl;
+    std::cout << "World create " << _particles.size() << " particles" << std::endl;
 }
 
 void World::calculateStatistics() {
-    totalEnergy = 0;
-    temperature = 0;
-    pressure = 0;
+    _totalEnergy = 0;
+    _temperature = 0;
+    _pressure = 0;
 
-    std::fill(velocityHistogram.begin(), velocityHistogram.end(), 0);
+    std::fill(_velocityHistogram.begin(), _velocityHistogram.end(), 0);
 
-    for (const auto& p : particles) {
+    for (const auto& p : _particles) {
         Vector3d vel = p.getVelocity();
+        double mass = p.getMass();
         double speed = vel.magnitude();
 
-        totalEnergy += 0.5 * speed * speed;
+        _totalEnergy += 0.5 * mass * speed * speed;
 
         int bin = static_cast<int>(speed * 2);
-        if (bin >= 0 && bin < velocityHistogram.size()) {
-            velocityHistogram[bin]++;
+        if (bin >= 0 && bin < _velocityHistogram.size()) {
+            _velocityHistogram[bin]++;
         }
     }
 
-    if (!particles.empty()) {
-        temperature = (2.0/3.0) * totalEnergy / particles.size();
+    if (!_particles.empty()) {
+        _temperature = (2.0/3.0) * _totalEnergy / _particles.size();
     }
 
-    double volume = boxSize * boxSize * boxSize;
-    pressure = particles.size() * temperature / volume;
+    double volume = _boxSize * _boxSize * _boxSize;
+    _pressure = _particles.size() * _temperature / volume;
 }
 
-void World::update() {
+void World::update(double dt) {
+    
     calculateStatistics();
+
+    
 }

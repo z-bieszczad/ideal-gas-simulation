@@ -5,12 +5,9 @@
 int main() {
     srand(time(nullptr));
     World world;
-    
-    
-    // Test 1: inicjalizacja
+
     world.initializeRandom(30, 5.0);
     
-    // Test 2: statystyki
     std::cout << "=== STATYSTYKI ===" << std::endl;
     std::cout << "Cząstek: " << world.getParticles().size() << std::endl;
     std::cout << "Energia: " << world.getTotalEnergy() << std::endl;

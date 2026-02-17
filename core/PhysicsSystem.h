@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-class PhysiscsSystem{
+class PhysiscSystem{
 public:
     void update(std::vector<Particle>& particles, double dt);
 

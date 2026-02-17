@@ -5,9 +5,9 @@ Renderer* instance = nullptr;
 
 
 Renderer::Renderer() :
-    windowWidth(1024), windowHeight(768), windowTitle("Ideal Gas Simulation 3D"),
-    cameraRotX(30.0), cameraRotY(-30.0), cameraDist(20.0), lastMouseX(0), lastMouseY(0),
-    mousePressed(false), boxSize(10.0), frameCount(0), fps(0.0), lastTime(0.0) {
+    _windowWidth(1024), _windowHeight(768), _windowTitle("Ideal Gas Simulation 3D"),
+    _cameraRotX(30.0), _cameraRotY(-30.0), _cameraDist(20.0), _lastMouseX(0), _lastMouseY(0),
+    _mousePressed(false), _frameCount(0), _fps(0.0), _lastTime(0.0), _worldPtr(nullptr) {
     
     instance = this;
 
@@ -15,6 +15,9 @@ Renderer::Renderer() :
 }
 
 void Renderer::drawParticles() {
+    if (!_worldPtr) return;
+
+    const auto& particles = _worldPtr->getParticles();
     if (particles.empty()) return;
 
     for (const auto& p : particles) {
@@ -22,12 +25,16 @@ void Renderer::drawParticles() {
 
         Vector3d pos = p.getPosition();
         glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-
+// 
         Vector3d vel = p.getVelocity();
         double speed = vel.magnitude();
 
         float speedFactor = std::min(1.0, speed / 5.0f);
         glColor3f(speedFactor, 0.2f, 1.0f - speedFactor);
+
+//  do  zmiany na color liczony z physics system tam gdzie wszystkie wartosci czastki
+        // Vector3d color = p.getColor();
+        // glColor3f(color.getX(), color.getY(), color.getZ())
 
         GLUquadric* quad = gluNewQuadric();
         gluSphere(quad, 0.2, 16, 16);
@@ -41,9 +48,9 @@ void Renderer::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    glTranslatef(0, 0, -cameraDist);
-    glRotatef(cameraRotX, 1, 0, 0);
-    glRotatef(cameraRotY, 0, 1, 0);
+    glTranslatef(0, 0, -_cameraDist);
+    glRotatef(_cameraRotX, 1, 0, 0);
+    glRotatef(_cameraRotY, 0, 1, 0);
 
     drawBox();
     drawParticles();
@@ -51,12 +58,12 @@ void Renderer::render() {
 
     glutSwapBuffers();
 
-    frameCount++;
+    _frameCount++;
     double currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0; 
-    if (currentTime - lastTime > 1.0) {
-        fps = frameCount / (currentTime - lastTime);
-        frameCount = 0;
-        lastTime = currentTime;
+    if (currentTime - _lastTime > 1.0) {
+        _fps = _frameCount / (currentTime - _lastTime);
+        _frameCount = 0;
+        _lastTime = currentTime;
     }
 }
 
@@ -65,7 +72,7 @@ void Renderer::drawBox() {
     
     glColor4f(0.3f, 0.5f, 1.0f, 0.1f);
 
-    float s = boxSize/2;
+    float s = _worldPtr->getBoxSize() / 2;
 
     glColor3f(0.5f, 0.7f, 1.0f);
     glLineWidth(2.0f);
@@ -99,8 +106,8 @@ void Renderer::update() {
 }
 
 void Renderer::reshape(int width, int height) {
-    windowWidth = width;
-    windowHeight = height;
+    _windowWidth = width;
+    _windowHeight = height;
 
     glViewport(0, 0, width, height);
 
@@ -119,22 +126,22 @@ void Renderer::keyboard(unsigned char key, int x, int y){
 
 void Renderer::mouseButton(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON) {
-        mousePressed = (state == GLUT_DOWN);
-        lastMouseX = x;
-        lastMouseY = y;
+        _mousePressed = (state == GLUT_DOWN);
+        _lastMouseX = x;
+        _lastMouseY = y;
     }
 }
 
 void Renderer::mouseMove(int x, int y) {
-    if (mousePressed) {
-        cameraRotY += (x - lastMouseX) * 0.3f;
-        cameraRotX += (y - lastMouseY) * 0.3f;
+    if (_mousePressed) {
+        _cameraRotY += (x - _lastMouseX) * 0.3f;
+        _cameraRotX += (y - _lastMouseY) * 0.3f;
 
-        if (cameraRotX > 80) cameraRotX = 80;
-        if (cameraRotY< -80) cameraRotY = -80;
+        if (_cameraRotX > 80) _cameraRotX = 80;
+        if (_cameraRotY< -80) _cameraRotY = -80;
 
-        lastMouseX = x;
-        lastMouseY = y;
+        _lastMouseX = x;
+        _lastMouseY = y;
         glutPostRedisplay();
     }
 }
@@ -164,18 +171,18 @@ void Renderer::idleCallback() {
 }
 
 bool Renderer::initialize(int width, int height, std::string title) {
-    windowHeight = height;
-    windowTitle = title;
-    windowWidth = width;
+    _windowHeight = height;
+    _windowTitle = title;
+    _windowWidth = width;
 
     int argc = 1;
     char* argv[1] = {(char*)"simulation"};
     glutInit(&argc, argv);
 
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(windowWidth, windowHeight);
+    glutInitWindowSize(_windowWidth, _windowHeight);
     glutInitWindowPosition(100, 100);
-    glutCreateWindow(windowTitle.c_str());
+    glutCreateWindow(_windowTitle.c_str());
 
     glutDisplayFunc(displayCallback);
     glutKeyboardFunc(keyboardCallback);

@@ -2,28 +2,29 @@
 #include <GL/glut.h>
 #include <string>
 #include <vector>
+#include "../world/World.h"
 #include "../core/Particle.h"
 
 
 
 class Renderer {
     private:
-      int windowWidth;
-      int windowHeight;
-      std::string windowTitle;
+      int _windowWidth;
+      int _windowHeight;
+      std::string _windowTitle;
 
-      float cameraRotX, cameraRotY;
+      float _cameraRotX, _cameraRotY;
 
-      float cameraDist;
-      int lastMouseX, lastMouseY;
-      bool mousePressed;
+      float _cameraDist;
+      int _lastMouseX, _lastMouseY;
+      bool _mousePressed;
 
-      std::vector<Particle> particles;
-      float boxSize;
+      World* _worldPtr;
 
-      int frameCount;
-      float fps;
-      double lastTime;
+      int _frameCount;
+      float _fps;
+      double _lastTime;
+
 
 
     public:
@@ -46,10 +47,7 @@ class Renderer {
         void drawParticles();
         void drawInfo();
 
-        inline void setParticles(const std::vector<Particle>& newParticles) { particles = newParticles;}
-        inline void setBoxSize(float size) { boxSize = size; }
-
-    
+        inline void setWorld(World* world) { _worldPtr = world; }    
         
         static void displayCallback();
         static void keyboardCallback(unsigned char key, int x, int y);
