@@ -36,6 +36,24 @@ void World::initializeRandom(int numParticles, double maxSpeed) {
     std::cout << "World create " << _particles.size() << " particles" << std::endl;
 }
 
+double World::getAverageSpeed() const {
+    if (_particles.empty()) return 0;
+    double sum = 0;
+    for (const auto& p : _particles) {
+        sum += p.getVelocity().magnitude();
+    }
+    return sum / _particles.size();
+}
+
+double World::getMaxSpeed() const {
+    double max = 0;
+    for (const auto& p : _particles) {
+        double speed = p.getVelocity().magnitude();
+        if (speed > max) max = speed;
+    }
+    return max;
+}
+
 void World::calculateStatistics() {
     _totalEnergy = 0;
     _temperature = 0;

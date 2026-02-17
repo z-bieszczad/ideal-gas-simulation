@@ -98,6 +98,126 @@ void Renderer::drawBox() {
 
 
 void Renderer::drawInfo() {
+    glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, _windowWidth, 0, _windowHeight);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glColor3f(1, 1, 1);
+
+    auto drawText = [](float x, float y, const char* str) {
+        glRasterPos2d(x, y);
+        for (const char* c = str; *c; c++) {
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
+        }
+    };
+
+    char buffer[256];
+    int yPos = 20;
+
+    int leftX = 10;
+
+    sprintf(buffer, "FPS: %.1f", _fps);
+    drawText(leftX, _windowHeight-yPos, buffer);
+    yPos += 20;
+
+    if (_worldPtr) {
+        sprintf(buffer, "Particles: %zu", _worldPtr->getParticles().size());
+        drawText(leftX, _windowHeight-yPos, buffer);
+        yPos += 20;
+
+        sprintf(buffer, "Energy: %.2f", _worldPtr->getTotalEnergy());
+        drawText(leftX, _windowHeight-yPos, buffer);
+        yPos += 20;
+        
+        sprintf(buffer, "Temperature: %.2f", _worldPtr->getTemperature());
+        drawText(leftX, _windowHeight-yPos, buffer);
+        yPos += 20;
+
+        sprintf(buffer, "Pressure: %.4f", _worldPtr->getPressure());
+        drawText(leftX, _windowHeight-yPos, buffer);
+        yPos += 20;
+
+        sprintf(buffer, "Average speed: %.2f", _worldPtr->getAverageSpeed());
+        drawText(leftX, _windowHeight-yPos, buffer);
+        yPos += 20;
+
+        sprintf(buffer, "Max speed: %.2f", _worldPtr->getMaxSpeed());
+        drawText(leftX, _windowHeight-yPos, buffer);
+        yPos += 20;
+    }
+
+    yPos = 100;
+    drawText(leftX, yPos, "Controls:");
+    yPos -= 20;
+    drawText(leftX, yPos, "Mouse - rotation");
+    yPos -= 20;
+    drawText(leftX, yPos, "+/- - zoom");
+    yPos -= 20;
+    drawText(leftX, yPos, "R - reset");
+    yPos -= 20;
+    drawText(leftX, yPos, "ESC - exit");
+
+
+    if (_worldPtr) {
+        const auto& hist = _worldPtr->getHistogram();
+        if (!hist.empty()) {
+            int histX = _windowWidth - 220;
+            int histY = _windowHeight - 180;
+            int histW = 200;
+            int histH = 150;
+
+            drawText(histX + 50, histY + histH + 15, "Velocity distribution");
+            
+            glColor3f(0.5, 0.5, 0.5);
+            glBegin(GL_LINE_LOOP);
+            glVertex2f(histX, histY);
+            glVertex2f(histX + histW, histY);
+            glVertex2f(histX + histW, histY + histH);
+            glVertex2f(histX, histY + histH);
+            glEnd();
+
+            int maxCount = 1;
+            for (int v : hist) if (v > maxCount) maxCount = v;
+
+            float barW = (float)histW / hist.size();
+            glColor3f(0.3, 0.6, 1.0);
+
+            for (int i = 0; i < hist.size(); i++) {
+            float barH = ((float)hist[i] / maxCount) * histH;
+
+            glBegin(GL_QUADS);
+            glVertex2f(histX + i * barW, histY);
+            glVertex2f(histX + (i+1) * barW, histY);
+            glVertex2f(histX + (i+1) * barW, histY + barH);
+            glVertex2f(histX + i * barW, histY + barH);
+            glEnd();
+
+            }
+
+            glColor3f(1, 1, 1);
+            for (int i = 0; i < hist.size(); i += 2) {
+                sprintf(buffer, "%.0f", i * 0.5);
+                drawText(histX + i*barW, histY - 15, buffer);
+            }
+
+        }
+    }
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
 
 }
 
@@ -119,7 +239,33 @@ void Renderer::reshape(int width, int height) {
 }
 
 void Renderer::keyboard(unsigned char key, int x, int y){
+        switch(key) {
+            case '+':
+            case '=':
+                _cameraDist -= 0.5f;
+                if (_cameraDist < 3.0f) _cameraDist = 3.0f;
+                glutPostRedisplay();
+                break;
+            
+            case '-':
+            case '_':
+                _cameraDist += 0.5f;
+                if (_cameraDist < 3.0f) _cameraDist = 3.0f;
+                glutPostRedisplay();
+                break;
 
+            case 'R':
+            case 'r':
+                _cameraRotX = 30.0f;
+                _cameraRotY = -30.0f;
+                _cameraDist = 20.0f;
+                glutPostRedisplay();
+                break;
+
+            case 27:
+                exit(0);
+                break;
+        }
 }
 
 

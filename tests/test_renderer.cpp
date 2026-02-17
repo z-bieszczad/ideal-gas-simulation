@@ -19,12 +19,6 @@ int main(int argc, char** argv) {
     }
 
     renderer.setWorld(&world);
-
-    std::cout << "=== SIMULATION ===\n";
-    std::cout << "Particles: " << world.getParticles().size() << std::endl;
-    std::cout << "Temperature: " << world.getTemperature() << std::endl;
-    std::cout << "Pressure: " << world.getPressure() << std::endl; 
-    
    
     glutMainLoop(); 
     return 0;

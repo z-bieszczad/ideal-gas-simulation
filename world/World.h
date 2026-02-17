@@ -24,6 +24,8 @@ class World {
         float getBoxSize() const { return _boxSize; }
 
         void calculateStatistics();
+        double getAverageSpeed() const;
+        double getMaxSpeed() const;
         double getTemperature() const { return _temperature; }
         double getPressure() const { return _pressure; }
         double getTotalEnergy() const { return _totalEnergy; }
