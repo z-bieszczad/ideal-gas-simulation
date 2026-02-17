@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Particle.h"
+#include "../core/Particle.h"
 #include "../math/Vec3.h"
 
 int main() {
