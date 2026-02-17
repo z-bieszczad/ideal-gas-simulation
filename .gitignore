@@ -19,5 +19,4 @@
 .DS_Store
 Thumbs.db
 
-tests/test_renderer.cpp
-test
+tests/*

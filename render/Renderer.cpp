@@ -14,6 +14,29 @@ Renderer::Renderer() :
     std::cout << "[RENDERER] Creating renderer \n";
 }
 
+void Renderer::drawParticles() {
+    if (particles.empty()) return;
+
+    for (const auto& p : particles) {
+        glPushMatrix();
+
+        Vector3d pos = p.getPosition();
+        glTranslatef(pos.getX(), pos.getY(), pos.getZ());
+
+        Vector3d vel = p.getVelocity();
+        double speed = vel.magnitude();
+
+        float speedFactor = std::min(1.0, speed / 5.0f);
+        glColor3f(speedFactor, 0.2f, 1.0f - speedFactor);
+
+        GLUquadric* quad = gluNewQuadric();
+        gluSphere(quad, 0.2, 16, 16);
+        gluDeleteQuadric(quad);
+
+        glPopMatrix();
+    }
+}
+
 void Renderer::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
@@ -22,9 +45,8 @@ void Renderer::render() {
     glRotatef(cameraRotX, 1, 0, 0);
     glRotatef(cameraRotY, 0, 1, 0);
 
-    drawGrid();
     drawBox();
-    // drawParticles();
+    drawParticles();
     drawInfo();
 
     glutSwapBuffers();
@@ -67,29 +89,6 @@ void Renderer::drawBox() {
     glEnable(GL_LIGHTING);
 }
 
-void Renderer::drawGrid() {
-    // glDisable(GL_LIGHTING);
-    // glColor3f(0.2f, 0.2f, 0.3f);
-    // glLineWidth(1.0f);
-    
-    // int gridSize = 10;
-    // float spacing = 1.0f;
-    // float offset = -gridSize * spacing / 2;
-
-    // glBegin(GL_LINES);
-    // for (int i = 0; i <= gridSize; i++) {
-    //     float x = offset + i * spacing;
-    //     glVertex3f(x, offset, 0);
-    //     glVertex3f(x, -offset, 0);
-
-    //     glVertex3f(offset, x, 0);
-    //     glVertex3f(-offset, x, 0);
-    // }
-    // glEnd();
-
-    // glEnable(GL_LIGHTING);
-
-}
 
 void Renderer::drawInfo() {
 
