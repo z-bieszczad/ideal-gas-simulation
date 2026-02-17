@@ -30,7 +30,7 @@ void Renderer::render() {
     glutSwapBuffers();
 
     frameCount++;
-    double currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
+    double currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0; 
     if (currentTime - lastTime > 1.0) {
         fps = frameCount / (currentTime - lastTime);
         frameCount = 0;
