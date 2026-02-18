@@ -6,6 +6,10 @@
 #include "PhysicsSystem.h"
 
 
+PhysicsSystem::PhysicsSystem(double boxSize){
+    _halfSize=boxSize/2.0;
+}
+
 void PhysicsSystem::update(std::vector<Particle>& particles, double dt){
 
     for(auto &p: particles){
@@ -78,3 +82,65 @@ void PhysicsSystem:: handleParticleCollisions(std::vector<Particle>& particles){
 }
 
 
+void PhysicsSystem:: handleWallCollisions(std::vector<Particle>& particles){
+    const double minBound=-_halfSize;
+    const double maxBound=_halfSize;
+
+
+    for(auto& p :particles){
+        Vector3d position=p.getPosition();
+        Vector3d velocity=p.getVelocity();
+        double radius=p.getRadius();
+
+        if(position.getX()-radius<minBound){
+
+            position.setX(minBound+radius);
+            velocity.setX(-velocity.getX());
+
+        }else if(position.getX()+radius >maxBound){
+            position.setX(maxBound-radius);
+            velocity.setX(-velocity.getX());
+        }
+
+        if(position.getY()-radius<minBound){
+
+            position.setY(minBound+radius);
+            velocity.setY(-velocity.getY());
+
+        }else if(position.getY()+radius >maxBound){
+            position.setY(maxBound-radius);
+            velocity.setY(-velocity.getY());
+        }
+
+        if(position.getZ()-radius<minBound){
+
+            position.setZ(minBound+radius);
+            velocity.setZ(-velocity.getZ());
+
+        }else if(position.getZ()+radius >maxBound){
+            position.setZ(maxBound-radius);
+            velocity.setZ(-velocity.getZ());
+        }
+
+        p.setPosition(position);
+        p.setVelocity(velocity);
+
+    }
+}
+
+void PhysicsSystem:: updateColorFromVelocity(Particle &particle){
+    const double lowerbound=0.5;
+    const double upperbound=3.0;
+
+    double speed=particle.getVelocity().magnitude();
+    double t=(speed -lowerbound)/(upperbound-lowerbound);
+
+    if(t<0.0) t=0.0;
+    if(t>1.0) t=1.0;
+
+    particle.setColor(Vector3d(t,0.0,1.0-t));
+
+}
+
+
+void PhysicsSystem::applyForces(std::vector<Particle>& particles){}

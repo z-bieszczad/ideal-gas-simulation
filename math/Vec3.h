@@ -17,6 +17,10 @@ public:
     double getY() const;
     double getZ() const;
 
+    void setX(double x);
+    void setY(double y);
+    void setZ(double z);
+
     Vector3d operator+(const Vector3d& other) const;
     Vector3d operator-(const Vector3d& other) const;
     Vector3d operator*(double scalar) const;

@@ -129,4 +129,18 @@ double Vector3d:: getZ() const{
 }
 
 
+//setters
+void Vector3d:: setX(double x){
+    _x=x;
+}
+
+void Vector3d:: setY(double y) {
+    _y=y;
+}
+
+void Vector3d:: setZ(double z) {
+    _z=z;
+}
+
+
 
