@@ -64,6 +64,7 @@ public:
     const Vector3d& getVelocity() const;
     double getMass() const;
     double getRadius() const;
+    Vector3d getColor() const;
     Vector3d getForce() const;
 
     void setPosition(const Vector3d& other);

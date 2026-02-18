@@ -26,6 +26,10 @@ Vector3d Particle:: getForce() const{
     return _force;
 }
 
+Vector3d Particle:: getColor() const{
+    return _color;
+}
+
 // setters
 void Particle::setPosition(const Vector3d& other){
     _position=other;
