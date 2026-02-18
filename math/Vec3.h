@@ -11,6 +11,7 @@ public:
     double dot(const Vector3d &other) const;
     double magnitude() const;
     Vector3d normalize() const;
+
     
     double getX() const;
     double getY() const;

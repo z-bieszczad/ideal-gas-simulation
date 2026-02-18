@@ -18,7 +18,6 @@ double Particle:: getMass() const{
     return _mass;
 }
 
-
 double Particle:: getRadius() const{
     return _radius;
 }
